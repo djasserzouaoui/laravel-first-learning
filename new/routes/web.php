@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/','post.index')->name('home');
+Route::get('/',[PostController::class,'index'])->name('home');
 
 Route::middleware('auth')->group(function(){
-    Route::get('/dashboard',[PostController::class,'index'])->name('view.dashboard');
-
+    Route::get('/dashboard',[DashboardController::class,'index'])->name('view.dashboard');
+    Route::post('/logout',[AuthController::class,'logout'])->name('logout');
     Route::resource('post',PostController::class);
 });
 
@@ -19,6 +20,4 @@ Route::middleware('guest')->group(function(){
 
     Route::post('/register',[AuthController::class,'register'])->name('register');
     Route::post('/login',[AuthController::class,'login'])->name('login');
-    Route::post('/logout',[AuthController::class,'logout'])->name('logout');
-    
 });

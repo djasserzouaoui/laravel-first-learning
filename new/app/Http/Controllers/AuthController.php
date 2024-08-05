@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -12,8 +13,14 @@ class AuthController extends Controller
             'name'=>['required','min:6'],
             'email'=>['required','email','unique:users'],
             'password'=>['required','min:6','confirmed'],
+            'image'=>['required','image','mimes:png,jpg,jpeg']
          ]);
-        
+         $path=null;
+         if($request->hasFile('image')){
+            $path=Storage::disk('public')->put('users_images',$request->image);
+            $field['image_path']=$path;
+         }
+         
          $user=User::create($field);
          Auth::login($user);
 
@@ -32,9 +39,9 @@ class AuthController extends Controller
            
     }
     public function logout(Request $request){
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('home');
+       Auth::logout();
+       $request->session()->invalidate();
+       $request->session()->regenerateToken();
+       return redirect()->route('home');
     }
 }

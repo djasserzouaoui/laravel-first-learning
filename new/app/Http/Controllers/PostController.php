@@ -14,7 +14,7 @@ class PostController extends Controller
     public function index()
     {
         $posts=Post::latest()->paginate(3);
-        return view('Auth.dashboard',['posts'=>$posts]);
+        return view('post.index',['posts'=>$posts]);
     }
 
     /**
@@ -53,7 +53,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('post.edit',['post'=>$post]);
     }
 
     /**
@@ -61,7 +61,12 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $field=$request->validate([
+            'title'=>['required'],
+            'body'=>['required'],
+        ]);
+        $post->update($field);
+        return redirect()->route('view.dashboard')->with('true','your post was updated!');
     }
 
     /**
@@ -69,6 +74,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return redirect()->route('view.dashboard')->with('true','your post was deleted!');
     }
 }
